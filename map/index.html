@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>APSIA - Map</title>
+		<meta charset="UTF-8">
+		<script>
+			window.addEventListener("load", () =>
+			{
+				const CONFIG_PATH = "../bot/config/clock_config.json";
+				const time_area = document.getElementById("time_area");
+
+				function fetch_config(on_config)
+				{
+					function fetch_failed(code)
+					{
+						console.error(`Failed to fetch clock config. (${code})`);
+					}
+
+					fetch(CONFIG_PATH).then((response) =>
+					{
+						if (response.ok)
+						{
+							response.json().then((obj) =>
+							{
+								on_config(obj)
+							}).catch(fetch_failed(-1));
+						}
+						else
+						{
+							fetch_failed(response.status);
+						}
+					}).catch(() => fetch_failed(0));
+				}
+
+				function get_short_month_name(month)
+				{
+					switch (month)
+					{
+						case 0: return "Jan";
+						case 1: return "Feb";
+						case 2: return "Mar";
+						case 3: return "Apr";
+						case 4: return "May";
+						case 5: return "Jun";
+						case 6: return "Jul";
+						case 7: return "Aug";
+						case 8: return "Sep";
+						case 9: return "Oct";
+						case 10: return "Nov";
+						case 11: return "Dec";
+						default: return "Err";
+					}
+				}
+
+				function get_long_month_name(month)
+				{
+					switch (month)
+					{
+						case 0: return "January";
+						case 1: return "February";
+						case 2: return "March";
+						case 3: return "April";
+						case 4: return "May";
+						case 5: return "June";
+						case 6: return "July";
+						case 7: return "August";
+						case 8: return "September";
+						case 9: return "October";
+						case 10: return "November";
+						case 11: return "December";
+						default: return "Err";
+					}
+				}
+
+				function format_date(timestamp, python_date_format)
+				{
+					let date = new Date(timestamp);
+
+					return python_date_format
+						.replace("%a", "Err")
+						.replace("%A", "Err")
+						.replace("%w", "Err")
+						.replace("%d", date.getUTCDate())
+						.replace("%b", get_short_month_name(date.getUTCMonth()))
+						.replace("%B", get_long_month_name(date.getUTCMonth()))
+						.replace("%m", date.getUTCMonth() + 1)
+						.replace("%y", date.getUTCFullYear() % 100)
+						.replace("%Y", date.getUTCFullYear())
+						.replace("%H", date.getUTCHours())
+						.replace("%I", ((date.getUTCHours() % 12) === 0) ? 12 : (date.getUTCHours() % 12))
+						.replace("%p", date.getUTCHours() >= 12 ? "PM" : "AM")
+						.replace("%M", date.getUTCMinutes())
+						.replace("%S", date.getUTCSeconds())
+						.replace("%f", 0)
+						.replace("%z", "+0000")
+						.replace("%Z", "UTC")
+						.replace("%j", "Err")
+						.replace("%U", "Err")
+						.replace("%W", "Err")
+						.replace("%c", date.toLocaleString())
+						.replace("%x", date.toLocaleDateString())
+						.replace("%X", date.toLocaleTimeString())
+						.replace("%%", "%");
+				}
+
+				let config = null;
+
+				function update_time()
+				{
+					const relative_utctime = Date.now() - new Date(config.time_epoch).getTime();
+					const scaled_time = new Date(config.time_start).getTime() + (relative_utctime * config.time_scale);
+					time_area.innerText = format_date(scaled_time, config.display_format);
+				}
+
+				fetch_config(function(obj)
+				{
+					config = obj;
+
+					setInterval(update_time, 500);
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div>
+			<span id="time_area"></span>
+		</div>
+		<div>
+			<img src="./map.png"/>
+		</div>
+	</body>
+</html>
