@@ -32,6 +32,13 @@
 					}).catch(() => fetch_failed(0));
 				}
 
+				function pad_left(str, chr, width)
+				{
+					str = `${str}`;
+					while (str.length < width) str = chr + str;
+					return str;
+				}
+
 				function get_short_month_name(month)
 				{
 					switch (month)
@@ -80,17 +87,17 @@
 						.replace("%a", "Err")
 						.replace("%A", "Err")
 						.replace("%w", "Err")
-						.replace("%d", date.getUTCDate())
+						.replace("%d", pad_left(date.getUTCDate(), "0", 2))
 						.replace("%b", get_short_month_name(date.getUTCMonth()))
 						.replace("%B", get_long_month_name(date.getUTCMonth()))
-						.replace("%m", date.getUTCMonth() + 1)
-						.replace("%y", date.getUTCFullYear() % 100)
-						.replace("%Y", date.getUTCFullYear())
-						.replace("%H", date.getUTCHours())
-						.replace("%I", ((date.getUTCHours() % 12) === 0) ? 12 : (date.getUTCHours() % 12))
+						.replace("%m", pad_left(date.getUTCMonth() + 1, "0", 2))
+						.replace("%y", pad_left(date.getUTCFullYear() % 100, "0", 2))
+						.replace("%Y", pad_left(date.getUTCFullYear(), "0", 4))
+						.replace("%H", pad_left(date.getUTCHours(), "0", 2))
+						.replace("%I", pad_left(((date.getUTCHours() % 12) === 0) ? 12 : (date.getUTCHours() % 12), "0", 2))
 						.replace("%p", date.getUTCHours() >= 12 ? "PM" : "AM")
-						.replace("%M", date.getUTCMinutes())
-						.replace("%S", date.getUTCSeconds())
+						.replace("%M", pad_left(date.getUTCMinutes(), "0", 2))
+						.replace("%S", pad_left(date.getUTCSeconds(), "0", 2))
 						.replace("%f", 0)
 						.replace("%z", "+0000")
 						.replace("%Z", "UTC")
