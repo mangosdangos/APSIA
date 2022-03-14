@@ -116,14 +116,14 @@
 				{
 					const relative_utctime = Date.now() - new Date(config.time_epoch).getTime();
 					const scaled_time = new Date(config.time_start).getTime() + (relative_utctime * config.time_scale);
-					time_area.innerText = format_date(scaled_time, config.display_format);
+					time_area.innerText = format_date(scaled_time, config.alt_display_format);
 				}
 
 				fetch_config(function(obj)
 				{
 					config = obj;
 
-					setInterval(update_time, 500);
+					setInterval(update_time, 100);
 				});
 			});
 		</script>

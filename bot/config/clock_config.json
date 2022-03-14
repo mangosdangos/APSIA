@@ -4,6 +4,7 @@
 	"time_start": "1955-01-01",
 	"time_epoch": "2022-03-12",
 	"display_format": "%B %d, %Y",
+	"alt_display_format": "%B %d, %Y %H:%M:%S",
 	"servers": [
 		{
 			"id": 806220570051084368,
