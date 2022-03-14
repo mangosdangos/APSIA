@@ -3,12 +3,41 @@
 	<head>
 		<title>APSIA - Map</title>
 		<meta charset="UTF-8">
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+		<style>
+			html, body
+			{
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				color: white;
+				background-color: black;
+			}
+
+			#header_area
+			{
+				padding: 0.5em;
+			}
+
+			#time_area
+			{
+				font-family: monospace;
+			}
+
+			#map_area
+			{
+				width: 100%;
+				height: 90%;
+			}
+		</style>
+		<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
 		<script src="./dates.js"></script>
 		<script>
 			window.addEventListener("load", () =>
 			{
 				const CONFIG_PATH = "../bot/config/clock_config.json";
 				const time_area = document.getElementById("time_area");
+				const map_image = document.getElementById("map_image");
 
 				function fetch_config(on_config)
 				{
@@ -35,6 +64,28 @@
 
 				let config = null;
 
+				function show_map()
+				{
+					const width = map_image.width;
+					const height = map_image.height;
+					const src = map_image.src;
+					map_image.parentElement.removeChild(map_image);
+
+					const map = L.map("map_area", {
+						minZoom: 2,
+						maxZoom: 10,
+						center: [0, 0],
+						zoom: 2,
+						crs: L.CRS.Simple
+					});
+
+					const southWest = map.unproject([0, height], map.getMaxZoom() / 2);
+					const northEast = map.unproject([width, 0], map.getMaxZoom() / 2);
+					const bounds = new L.LatLngBounds(southWest, northEast);
+					L.imageOverlay(src, bounds).addTo(map);
+					map.setMaxBounds(bounds);
+				}
+
 				function update_time()
 				{
 					const relative_utctime = Date.now() - new Date(config.time_epoch).getTime();
@@ -42,6 +93,7 @@
 					time_area.innerText = format_date(scaled_time, config.alt_display_format);
 				}
 
+				show_map();
 				fetch_config(function(obj)
 				{
 					config = obj;
@@ -52,11 +104,11 @@
 		</script>
 	</head>
 	<body>
-		<div>
+		<div id="header_area">
 			<span id="time_area"></span>
 		</div>
-		<div>
-			<img src="./map.png"/>
+		<div id="map_area">
+			<img id="map_image" src="./map.png"/>
 		</div>
 	</body>
 </html>
