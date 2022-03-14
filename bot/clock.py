@@ -1,4 +1,3 @@
-import asyncio
 import discord, json, threading
 from datetime import datetime, timedelta
 from time import sleep
@@ -66,8 +65,9 @@ async def on_update():
 	name = get_time_str()
 	for channel in channels:
 		try:
-			print(f"Time is now: {name}")
+			print(f"Time is pending: {name}")
 			await channel.edit(name=name)
+			print(f"Time is now: {name}")
 		except Exception as ex:
 			print(f"Failed to update channel {channel.id}: {ex}")
 
