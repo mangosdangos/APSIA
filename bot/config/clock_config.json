@@ -1,8 +1,8 @@
 {
 	"update_interval": 3600,
 	"time_scale": 10,
-	"time_start": "1955-01-01",
-	"time_epoch": "2022-03-21",
+	"time_start": "1957-01-01",
+	"time_epoch": "2022-06-21",
 	"display_format": "%B %d, %Y",
 	"alt_display_format": "%B %d, %Y %H:%M:%S",
 	"servers": [
